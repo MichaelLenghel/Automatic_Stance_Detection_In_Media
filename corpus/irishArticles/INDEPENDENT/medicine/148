@@ -1,0 +1,66 @@
+medicine
+{ Alan O'Keeffe 
+    October 28 2018 06:00 PM
+ https://www.independent.ie/irish-news/medical-tests-for-drivers-over-70-should-be-ended-says-traffic-medicine-expert-37466513.html }
+Compulsory medical tests for drivers aged over 70 should be abolished, the director of the National Office of Traffic Medicine has said. Professor Desmond O'Neill said drivers aged over 70 were safer than younger drivers. "Our group has advised the Government to relax the rule about getting tested [medically] every three years once you reach 70," he said. "At the moment, at 70 you have to get a medical certificate from your doctor and the cert will be for a year or three years. A cert is needed every three years. We say it should be abolished and, in its place, put self-declaration." 
+
+
+        (function() {
+            var getPollIdFromUrl = function(url) {
+                var pollId,
+                    pos = url.lastIndexOf('-');
+
+                if (pos > 0) {
+                    var chunk = url.substr(pos + 1);
+                    pos = chunk.indexOf('.');
+
+                    if (pos > 0) {
+                        pollId = chunk.substr(0, pos);
+                    }
+                }
+
+                return pollId;
+            };
+
+            window.addEventListener('message', function(messageEvent) {
+                try {
+                    var data = JSON.parse(messageEvent.data);
+                    if ((data.type === 'embed-poll-frame-resize') &&
+                        data.src &&
+                        getPollIdFromUrl(data.src) &&
+                        data.height) {
+
+                        var iframe = document.getElementById('poll-iframe-' + getPollIdFromUrl(data.src));
+                        if (iframe && (iframe.offsetHeight !== data.height)) {
+                            console.log('Resizing poll-iframe-' + getPollIdFromUrl(data.src) + ' to ' + data.height + 'px');
+                            iframe.style.height = data.height + 'px';
+                        }
+                    }
+                } catch(e) {}
+            }, false);
+
+            for (var embedPollElements = document.querySelectorAll('.embed-poll'), i = 0, ii = embedPollElements.length; i < ii; i++) {
+                var embedPollElement = embedPollElements.item(i);
+                var pollSrc = embedPollElement.dataset.src;
+                var app = (embedPollElement.dataset.app === 'true');
+                var noSharing = (embedPollElement.dataset.sharing === 'false');
+
+                if (pollSrc) {
+                    var iframe = document.createElement('iframe');
+                    iframe.setAttribute('id', 'poll-iframe-' + getPollIdFromUrl(pollSrc));
+                    iframe.setAttribute('scrolling', 'no');
+                    iframe.setAttribute('style', 'border: none; overflow: hidden; width: 100%; height: 0;');
+                    iframe.setAttribute('src', pollSrc + '?service=embed-poll' + (app ? '&app=true' : '') + (noSharing ? '&sharing=false' : ''));
+
+                    embedPollElement.parentNode.insertBefore(iframe, embedPollElement.nextSibling);
+
+                    if (embedPollElement.getAttribute('id')) {
+                        embedPollElement.removeAttribute('class');
+                    } else {
+                        embedPollElement.remove();
+                    }
+                }
+            }
+        })();
+    
+ Prof O'Neill, a specialist in geriatric and stroke medicine, said a range of measures could replace the mandatory medical tests. "In the UK and America, there are reduced insurance premiums for older drivers, aged over 65 or 70. They tend to drive less so their crash record is good," he told the Sunday Independent. "Older drivers are safer but there's a perception that they are somehow dangerous, with lots of medical conditions. But as we get older, we do get wiser. In fact, around the world, older drivers have a safer record." Prof O'Neill said the problem was a degree of ageism among the general public and policymakers, while media reports could be very negative about older drivers, too. Around the world where there is mandatory medical screening for drivers aged over 70, more older people die on the roads, either as pedestrians or as cyclists. Motorists who get to old age tend to limit their driving and they can get to a challenging moment where they decide to stop getting behind the wheel altogether, he said. New Fitness to Drive Guidelines for doctors launched by the National Office of Traffic Medicine emphasise keeping drivers on the road, where possible.  "By and large, older drivers are a safe group of drivers. Doctors need to have good guidelines to help give advice on how to stay mobile for as long as possible," Prof O'Neill added. "Our guidelines are the best in the world and we are the first in the world to have a certificate in traffic medicine for doctors." The office has also worked on implementing restricted driving licences which stipulate that motorists can drive only within a certain distance of their homes, or can do only daylight driving, or not go above 80kph. Studies showed that once drivers diagnosed with mild dementia registered with the driver licensing agency as having the condition, their crash risk was lower than a control group because those drivers knew that they had  to be more careful and cautious. Doctors with patients with mild cognitive impairment should be mindful to review the patient periodically to make sure the condition does not progress. People tend to listen to doctors' advice about not driving any more when the time comes.  Where a patient rejects the advice, a doctor can contact a garda hotline. Families can also inform gardai if they believe an older relative is driving dangerously. The National Office of Traffic Medicine has a range of advice leaflets available online. Sunday Independent 

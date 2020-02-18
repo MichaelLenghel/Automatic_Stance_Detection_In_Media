@@ -1,0 +1,66 @@
+online
+{ Katherine Donnelly 
+    February 06 2018 02:30 AM
+ https://www.independent.ie/irish-news/how-thousands-of-children-chat-to-strangers-online-and-almost-half-lie-about-their-age-36572023.html }
+The number of Irish children having online conversations with strangers could run into the thousands. One-in-three 8-13 year olds rarely or never talk to their parents about online safety - and one-in-three of those is in regular contact with a stranger online. The findings are based on a survey of 1,500 primary pupils by the internet safety charity CyberSafeIreland, which was conducted between September and November 2017. If the figures from the sample are representative of the total population in that age bracket - about 300,000 - it would amount to thousands at similar risk. "All children in this age group who are online are potentially vulnerable, but those who are online without parental engagement are particularly vulnerable," said CyberSafeIreland CEO Alex Cooney. She said of the group going online without parental engagement, more than 34pc were in regular contact with a stranger, while 50pc used social media and messaging apps that were meant to be inaccessible to those under 13. Meanwhile a survey of 400 Irish teens carried out by UNICEF has found that almost half have lied about their age online in order to get around built-in safety measures. And of concern to parents attempting to monitor their teenagers' online activity, the survey also found 6pc have fake social media profiles while 3pc own a "secret phone". 
+
+
+        (function() {
+            var getPollIdFromUrl = function(url) {
+                var pollId,
+                    pos = url.lastIndexOf('-');
+
+                if (pos > 0) {
+                    var chunk = url.substr(pos + 1);
+                    pos = chunk.indexOf('.');
+
+                    if (pos > 0) {
+                        pollId = chunk.substr(0, pos);
+                    }
+                }
+
+                return pollId;
+            };
+
+            window.addEventListener('message', function(messageEvent) {
+                try {
+                    var data = JSON.parse(messageEvent.data);
+                    if ((data.type === 'embed-poll-frame-resize') &&
+                        data.src &&
+                        getPollIdFromUrl(data.src) &&
+                        data.height) {
+
+                        var iframe = document.getElementById('poll-iframe-' + getPollIdFromUrl(data.src));
+                        if (iframe && (iframe.offsetHeight !== data.height)) {
+                            console.log('Resizing poll-iframe-' + getPollIdFromUrl(data.src) + ' to ' + data.height + 'px');
+                            iframe.style.height = data.height + 'px';
+                        }
+                    }
+                } catch(e) {}
+            }, false);
+
+            for (var embedPollElements = document.querySelectorAll('.embed-poll'), i = 0, ii = embedPollElements.length; i < ii; i++) {
+                var embedPollElement = embedPollElements.item(i);
+                var pollSrc = embedPollElement.dataset.src;
+                var app = (embedPollElement.dataset.app === 'true');
+                var noSharing = (embedPollElement.dataset.sharing === 'false');
+
+                if (pollSrc) {
+                    var iframe = document.createElement('iframe');
+                    iframe.setAttribute('id', 'poll-iframe-' + getPollIdFromUrl(pollSrc));
+                    iframe.setAttribute('scrolling', 'no');
+                    iframe.setAttribute('style', 'border: none; overflow: hidden; width: 100%; height: 0;');
+                    iframe.setAttribute('src', pollSrc + '?service=embed-poll' + (app ? '&app=true' : '') + (noSharing ? '&sharing=false' : ''));
+
+                    embedPollElement.parentNode.insertBefore(iframe, embedPollElement.nextSibling);
+
+                    if (embedPollElement.getAttribute('id')) {
+                        embedPollElement.removeAttribute('class');
+                    } else {
+                        embedPollElement.remove();
+                    }
+                }
+            }
+        })();
+    
+ Three in four of the teens surveyed said they take responsibility for their own safety online. The CyberSafeIreland survey found 67pc of children surveyed own a smartphone, 28pc are spending more than two hours a day online, with 69pc using social media and messaging apps like Facebook, Instagram, and Snapchat. The figures are published to coincide with Safer Internet Day today, and come as CyberSafeIreland calls for a national campaign to raise awareness among parents and teachers about online risks, similar to those to road safety and healthy eating. The charity provides expert guidance to primary schools, children and to parents. Ms Cooney said the online risks to which children were exposed had been highlighted in recent press coverage surrounding some very disturbing cases. "It is essential that any child who has access to the internet only does so with guidance and supervision from a parent or carer." She said the charity was concerned there was not enough guidance and support for parents, teachers, social workers and others working in child-focused environments to address the variety of online risks that children were facing. Irish Independent 

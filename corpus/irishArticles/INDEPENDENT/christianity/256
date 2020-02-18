@@ -1,0 +1,66 @@
+christianity
+{ Sabrina Barr 
+    March 06 2019 09:03 AM
+ https://www.independent.ie/news/ash-wednesday-2019-what-is-its-significance-in-the-christian-calendar-37884457.html }
+Ash Wednesday is a significant day on the Christian calendar, denoting the beginning of the repentant period of Lent which precedes Easter. It's observed by individuals from various sectors of Christianity, including Roman Catholics, Anglicans, Lutherans and Methodists. The practices of Ash Wednesday, such as the placing of ashes on the foreheads of participants, go back centuries. Here's everything you need to know about Ash Wednesday: Ash Wednesday marks the first day of Lent, a six-week period during which Christians often abstain from rich foods such as meat and dairy. Some who take part also abstain from everyday habits such as watching excessive amounts of television. Christians take part in the annual abstinent period of Lent in order to commemorate Jesus Christ, who, according to a biblical narrative, once spent 40 days and nights fasting in the Judaean Desert while being tempted by Satan. This year, Ash Wednesday takes place on Wednesday 6 March. Ash Wednesday occurs exactly 46 days before Easter Sunday, which is a moveable feast. Easter Sunday is always held on the first Sunday after a full moon following the Spring Equinox. Ash Wednesday occurs a day after Shrove Tuesday, otherwise known as Pancake Day. On Pancake Day, as the name suggests, it's customary to eat pancakes and other rich foods in preparation for Lent.   
+
+
+        (function() {
+            var getPollIdFromUrl = function(url) {
+                var pollId,
+                    pos = url.lastIndexOf('-');
+
+                if (pos > 0) {
+                    var chunk = url.substr(pos + 1);
+                    pos = chunk.indexOf('.');
+
+                    if (pos > 0) {
+                        pollId = chunk.substr(0, pos);
+                    }
+                }
+
+                return pollId;
+            };
+
+            window.addEventListener('message', function(messageEvent) {
+                try {
+                    var data = JSON.parse(messageEvent.data);
+                    if ((data.type === 'embed-poll-frame-resize') &&
+                        data.src &&
+                        getPollIdFromUrl(data.src) &&
+                        data.height) {
+
+                        var iframe = document.getElementById('poll-iframe-' + getPollIdFromUrl(data.src));
+                        if (iframe && (iframe.offsetHeight !== data.height)) {
+                            console.log('Resizing poll-iframe-' + getPollIdFromUrl(data.src) + ' to ' + data.height + 'px');
+                            iframe.style.height = data.height + 'px';
+                        }
+                    }
+                } catch(e) {}
+            }, false);
+
+            for (var embedPollElements = document.querySelectorAll('.embed-poll'), i = 0, ii = embedPollElements.length; i < ii; i++) {
+                var embedPollElement = embedPollElements.item(i);
+                var pollSrc = embedPollElement.dataset.src;
+                var app = (embedPollElement.dataset.app === 'true');
+                var noSharing = (embedPollElement.dataset.sharing === 'false');
+
+                if (pollSrc) {
+                    var iframe = document.createElement('iframe');
+                    iframe.setAttribute('id', 'poll-iframe-' + getPollIdFromUrl(pollSrc));
+                    iframe.setAttribute('scrolling', 'no');
+                    iframe.setAttribute('style', 'border: none; overflow: hidden; width: 100%; height: 0;');
+                    iframe.setAttribute('src', pollSrc + '?service=embed-poll' + (app ? '&app=true' : '') + (noSharing ? '&sharing=false' : ''));
+
+                    embedPollElement.parentNode.insertBefore(iframe, embedPollElement.nextSibling);
+
+                    if (embedPollElement.getAttribute('id')) {
+                        embedPollElement.removeAttribute('class');
+                    } else {
+                        embedPollElement.remove();
+                    }
+                }
+            }
+        })();
+    
+ During church services on Ash Wednesday, members of the clergy mark crosses on the foreheads of worshippers using ashes, or sprinkle ashes over their heads as a sign of repentance. The ashes, which are mixed with holy water or olive oil, are made by burning palm leaves on Shrove Tuesday. These leaves will have last been used during the church service for Palm Sunday the previous year. Palm Sunday occurs on the Sunday before Easter Sunday, and commemorates Christ's entry into Jerusalem days before the Last Supper. As the cross is marked on a person's forehead by a member of the clergy, they say: "Remember that you are guest, and to dust you shall return." Alternatively, the priest may say: "Repent and believe in the gospel." Independent News Service 

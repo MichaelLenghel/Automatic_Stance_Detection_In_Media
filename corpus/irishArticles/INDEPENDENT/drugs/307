@@ -1,0 +1,68 @@
+drugs
+{ Laura Larkin and Alan O'Keeffe 
+    September 07 2015 08:54 AM
+ https://www.independent.ie/irish-news/news/shocking-images-show-drug-users-injecting-heroin-on-city-streets-31507079.html }
+The Drugs Minister says these shocking images show exactly why Dublin needs mobile injecting centres as soon as possible. Labour Cabinet member Aodhan O'Riordan, the capital's Lord Mayor and a drugs addiction service have rowed in behind the demand for the new clinics. And the country's main tourism body had admitted that a solution is needed to stem the growing problem of drug-taking on the city's streets. The Herald's distressing images show drug-users undressing in public to inject heroin into themselves in broad daylight, just metres from the city's main thoroughfare. Three people prepare syringes full of illicit drugs in a doorway down Thomas Lane, just off O'Connell Street. Drug-taking paraphernalia, including a roll of tinfoil, can also be seen in the pictures, which were captured in an alley adjacent to the landmark Gresham Hotel - one of the city's most iconic buildings. 
+
+
+        (function() {
+            var getPollIdFromUrl = function(url) {
+                var pollId,
+                    pos = url.lastIndexOf('-');
+
+                if (pos > 0) {
+                    var chunk = url.substr(pos + 1);
+                    pos = chunk.indexOf('.');
+
+                    if (pos > 0) {
+                        pollId = chunk.substr(0, pos);
+                    }
+                }
+
+                return pollId;
+            };
+
+            window.addEventListener('message', function(messageEvent) {
+                try {
+                    var data = JSON.parse(messageEvent.data);
+                    if ((data.type === 'embed-poll-frame-resize') &&
+                        data.src &&
+                        getPollIdFromUrl(data.src) &&
+                        data.height) {
+
+                        var iframe = document.getElementById('poll-iframe-' + getPollIdFromUrl(data.src));
+                        if (iframe && (iframe.offsetHeight !== data.height)) {
+                            console.log('Resizing poll-iframe-' + getPollIdFromUrl(data.src) + ' to ' + data.height + 'px');
+                            iframe.style.height = data.height + 'px';
+                        }
+                    }
+                } catch(e) {}
+            }, false);
+
+            for (var embedPollElements = document.querySelectorAll('.embed-poll'), i = 0, ii = embedPollElements.length; i < ii; i++) {
+                var embedPollElement = embedPollElements.item(i);
+                var pollSrc = embedPollElement.dataset.src;
+                var app = (embedPollElement.dataset.app === 'true');
+                var noSharing = (embedPollElement.dataset.sharing === 'false');
+
+                if (pollSrc) {
+                    var iframe = document.createElement('iframe');
+                    iframe.setAttribute('id', 'poll-iframe-' + getPollIdFromUrl(pollSrc));
+                    iframe.setAttribute('scrolling', 'no');
+                    iframe.setAttribute('style', 'border: none; overflow: hidden; width: 100%; height: 0;');
+                    iframe.setAttribute('src', pollSrc + '?service=embed-poll' + (app ? '&app=true' : '') + (noSharing ? '&sharing=false' : ''));
+
+                    embedPollElement.parentNode.insertBefore(iframe, embedPollElement.nextSibling);
+
+                    if (embedPollElement.getAttribute('id')) {
+                        embedPollElement.removeAttribute('class');
+                    } else {
+                        embedPollElement.remove();
+                    }
+                }
+            }
+        })();
+    
+ Drugs Minister Aodhan O'Riordan said the Herald's graphic photographs show that urgent action is needed. "I think everyone who lives in Dublin knows that it happens. Legislation "Often they don't see it in such a graphic way, but I think sometimes (they) need to become more aware of the vulnerable nature of something to demand change," he said. 
+Close
+ Drugs abusers at Thomas Lane, Dublin 1 / "I think anybody who viewed these pictures would realise that if these people had somewhere to go to inject in a medically-supervised centre, it would be safer for the individuals and they would be less likely to leave paraphernalia behind them," Mr O'Riordan said. The minister said he wants to see legislation for medically-supervised injection centres introduced as soon as possible. He is hoping to get Cabinet approval soon for a new heads of bill for the Misuse of Drugs Act that would make it possible to use such centres. "Nobody wants to see that, nobody wants to encounter or come across the needles that are left behind," he said. "The last thing the people in those photographs need is to be treated in the criminal justice system." Meanwhile, the Lord Mayor of Dublin, Criona Ni Dhalaigh, has called for a political push to see legislation enacted before the next election. "How could you not want the people pictured to be treated with compassion," she asked. "It's awful that people are forced to use alleyways - as if it's not stigmatised enough. It [the legislation] could be done if there is the political will to follow through. "It's not acceptable or safe that people are injecting down alleyways; it is also totally unacceptable that communities have to try and walk their own streets that are littered with unsafely discarded syringes," Ms Ni Dhalaigh added. Seperately, Tony Duffin, director of the Ana Liffey drugs project, said that he is hopeful of change under the Government's new direction in relation to tackling drugs. Ana Liffey are a support group for people suffering from addictions. "This is what businesses deal with when they open up every morning," Mr Duffin said. "This is what tourists see when they visit Dublin's historic city centre. This is what commuters see as they cross the city. "For the people injecting themselves, it is filled with risk, desperation and shame. I have never met a drug-user who wants to inject in public," Mr Duffin said. The scenes on this page took place as tourists walked by just yards away. Failte Ireland is the National Tourism Development Authority and works to sustain Ireland as a high-quality and competitive tourism destination. A spokesman for the authority said the actions of drug-addicts on the streets of Dublin was "a matter of concern that is being monitored". "Obviously, it would be preferable if tourists did not see anything like that," he said, adding that the problem of such behaviour "did not loom large" in tourists' experiences of the city. "It is a social problem that needs a solution. "It is something that we would like to see solved for the benefit of those involved and for everyone concerned, including tourists, of course," said the spokesman. Herald 

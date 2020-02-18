@@ -1,0 +1,68 @@
+brexit
+{ John Downing 
+    October 14 2019 01:30 AM
+ https://www.independent.ie/business/brexit/taoiseach-told-snap-election-must-follow-a-deal-on-brexit-38590981.html }
+Taoiseach Leo Varadkar will come under intense pressure to call a snap general election if a late Brexit deal emerges. Several key Fine Gael figures have told the Irish Independent that many within the party believe they would do far better in an early contest, rather than waiting into spring or early summer next year. Backing for an early election is also very prevalent among key Government ministers. "In fact, you would struggle to find a Fine Gael minister who is not in favour of an early election - provided the Brexit crux is resolved," one minister told the Irish Independent. Another leading Fine Gael figure said a Brexit deal would mean an early general election was very much on the agenda. "If there is a deal on Brexit, then the Taoiseach will have a very serious decision to make. Many TDs believe their chances would be better in an early vote - probably even next month," the senior source said. 
+
+
+        (function() {
+            var getPollIdFromUrl = function(url) {
+                var pollId,
+                    pos = url.lastIndexOf('-');
+
+                if (pos > 0) {
+                    var chunk = url.substr(pos + 1);
+                    pos = chunk.indexOf('.');
+
+                    if (pos > 0) {
+                        pollId = chunk.substr(0, pos);
+                    }
+                }
+
+                return pollId;
+            };
+
+            window.addEventListener('message', function(messageEvent) {
+                try {
+                    var data = JSON.parse(messageEvent.data);
+                    if ((data.type === 'embed-poll-frame-resize') &&
+                        data.src &&
+                        getPollIdFromUrl(data.src) &&
+                        data.height) {
+
+                        var iframe = document.getElementById('poll-iframe-' + getPollIdFromUrl(data.src));
+                        if (iframe && (iframe.offsetHeight !== data.height)) {
+                            console.log('Resizing poll-iframe-' + getPollIdFromUrl(data.src) + ' to ' + data.height + 'px');
+                            iframe.style.height = data.height + 'px';
+                        }
+                    }
+                } catch(e) {}
+            }, false);
+
+            for (var embedPollElements = document.querySelectorAll('.embed-poll'), i = 0, ii = embedPollElements.length; i < ii; i++) {
+                var embedPollElement = embedPollElements.item(i);
+                var pollSrc = embedPollElement.dataset.src;
+                var app = (embedPollElement.dataset.app === 'true');
+                var noSharing = (embedPollElement.dataset.sharing === 'false');
+
+                if (pollSrc) {
+                    var iframe = document.createElement('iframe');
+                    iframe.setAttribute('id', 'poll-iframe-' + getPollIdFromUrl(pollSrc));
+                    iframe.setAttribute('scrolling', 'no');
+                    iframe.setAttribute('style', 'border: none; overflow: hidden; width: 100%; height: 0;');
+                    iframe.setAttribute('src', pollSrc + '?service=embed-poll' + (app ? '&app=true' : '') + (noSharing ? '&sharing=false' : ''));
+
+                    embedPollElement.parentNode.insertBefore(iframe, embedPollElement.nextSibling);
+
+                    if (embedPollElement.getAttribute('id')) {
+                        embedPollElement.removeAttribute('class');
+                    } else {
+                        embedPollElement.remove();
+                    }
+                }
+            }
+        })();
+    
+ Politicians in other parties also said they were aware of intensifying election talk within Fine Gael. A renewed bout of bad-tempered sparring between Fine Gael and Fianna Fáil over the weekend added to this fevered atmosphere. Fianna Fáil leader Micheál Martin renewed his nominal commitment to underpinning the current minority coalition into next year. But he revealed his party's readiness for an election sooner than that - by saying any move by the Taoiseach for an earlier vote would amount to "a stroke". Talks on a Brexit deal resume in Brussels today before Thursday's EU leaders' summit. British Prime Minister Boris Johnson has struck an upbeat note about the talks. 
+Close
+ Uphill battle: UK Prime Minister Boris Johnson is determined to leave the EU on October 31. Photo: REUTERS REUTERS / He has told his cabinet a last-minute deal was still possible as the two sides pressed on with intensive talks to try to avoid a no-deal crash-out Brexit on October 31. "The prime minister said there was a way forward for a deal that could secure all our interests... but that there is still a significant amount of work to get there and we must remain prepared to leave [without a deal] on October 31," said a spokeswoman from Mr Johnson's office. Both the UK government and the European Union said yesterday a lot more work would be needed to secure an agreement on the UK's EU departure. The EU side was less bullish about the talks, noting there was no breakthrough over the weekend but Brussels diplomats said the continuation of talks was a good sign in itself. "A lot of work remains to be done," the European Commission said in a statement last night. It said talks would continue today and EU chief negotiator Michel Barnier would update the 27 foreign ministers at a meeting in Luxembourg tomorrow. Foreign Affairs Minister Simon Coveney will attend this meeting along with EU Affairs Minister Helen McEntee. Mr Barnier's briefing will not be attended by the UK representative. "Differences persist on customs," said one EU diplomat. Mr Johnson still hopes a deal can be agreed in time for EU leaders to approve it at a summit in Brussels on Thursday and Friday. But he would still have an uphill battle to convince UK MPs to give it the necessary ratification at a special Saturday session of parliament after the leaders' summit. If Mr Johnson fails in any or all of this, many MPs will move to force him to comply with a law which says he must go against many previous declarations and seek an extension beyond October 31. Diplomats stressed there will be no technical Brexit negotiations at Thursday's EU leaders' summit, so everything depends on a breakthrough happening soon in the Brussels talks. "Small chances remain that a text could be ready for the summit and we won't negotiate at the summit. If talks are going well, we might say there is progress but more time is needed to continue," one diplomat said. A delay to the October 31 departure deadline could still be required - even if a deal was agreed in the coming days. Time would very likely still be needed to fine-tune the agreement. "It's up to the Brits to decide if they will ask for an extension," European Commission head Jean-Claude Juncker said in an interview with Austrian media outlet Kurier. "But if Boris Johnson were to ask for extra time - which probably he won't - I would consider it unhistoric to refuse such a request." Extension options range from as short as an extra month to half a year or longer and all other EU states would need to agree unanimously to grant it. If the UK leaves the EU without a deal, experts have warned there could be serious short-term disruption with possible food, fuel and medicine shortages, and long-term damage to Britain's reputation as a stable home for foreign investment. All observers agree Ireland would suffer considerable disruption and economic risks. The UK government says it is doing everything it can to secure a deal, and that it has contingency plans to mitigate the impact of any no-deal exit. Ireland still poses the toughest issues in these Brexit talks. Negotiations are turning on ways to prevent Northern Ireland becoming a back door into the EU's markets without having Border controls. The EU backs concerns that controls on the 500km Border would undermine the 1998 Good Friday Agreement which ended three decades of conflict that killed more than 3,600 people. The 'Sunday Times' reported Mr Johnson would speak to German Chancellor Angela Merkel, French President Emmanuel Macron and Mr Juncker later today. Since becoming prime minister on July 24, Mr Johnson has pushed 21 MPs out of his ruling Conservative party for not backing his Brexit plans, and is well short of a majority in parliament. The three main opposition parties - Labour, the Scottish National Party and the Liberal Democrats - are expected to oppose any final Brexit deal. Irish Independent 

@@ -1,0 +1,66 @@
+cars
+{ Áine Kenny 
+    June 18 2019 04:19 PM
+ https://www.independent.ie/irish-news/even-people-with-hybrid-cars-arent-charging-them-they-use-petrol-car-dealerships-dismiss-government-plans-38230648.html }
+The government's plans to ban petrol and diesel cars is "all talk", and will result in no immediate effect, the owner of a local dealership has said. The plan is to ban the sale of new fossil fuel cars from 2030 and stop granting these cars NCTs from 2045. This is part of Fine Gael's new climate strategy which was launched yesterday. The car industry has been targeted, with planned tax increases on both petrol and diesel fuel. The government also plan to invest in electric cars by making them easier to buy and charge. However, local car dealerships say these plans are so long-term, they are not certain if they'll even be implemented. Dave Griffin, owner of Bill Griffin Motors on the Naas Road in Dublin, is skeptical. "It's not realistic, it's just paper talk. If 1pc of this is taken on board they'll be doing well." The car dealer also points out that the majority of Ireland's electricity supply comes from non-renewable energy. "Where are we going to get all this electricity to charge these cars? They are still running on fossil fuels." 
+
+
+        (function() {
+            var getPollIdFromUrl = function(url) {
+                var pollId,
+                    pos = url.lastIndexOf('-');
+
+                if (pos > 0) {
+                    var chunk = url.substr(pos + 1);
+                    pos = chunk.indexOf('.');
+
+                    if (pos > 0) {
+                        pollId = chunk.substr(0, pos);
+                    }
+                }
+
+                return pollId;
+            };
+
+            window.addEventListener('message', function(messageEvent) {
+                try {
+                    var data = JSON.parse(messageEvent.data);
+                    if ((data.type === 'embed-poll-frame-resize') &&
+                        data.src &&
+                        getPollIdFromUrl(data.src) &&
+                        data.height) {
+
+                        var iframe = document.getElementById('poll-iframe-' + getPollIdFromUrl(data.src));
+                        if (iframe && (iframe.offsetHeight !== data.height)) {
+                            console.log('Resizing poll-iframe-' + getPollIdFromUrl(data.src) + ' to ' + data.height + 'px');
+                            iframe.style.height = data.height + 'px';
+                        }
+                    }
+                } catch(e) {}
+            }, false);
+
+            for (var embedPollElements = document.querySelectorAll('.embed-poll'), i = 0, ii = embedPollElements.length; i < ii; i++) {
+                var embedPollElement = embedPollElements.item(i);
+                var pollSrc = embedPollElement.dataset.src;
+                var app = (embedPollElement.dataset.app === 'true');
+                var noSharing = (embedPollElement.dataset.sharing === 'false');
+
+                if (pollSrc) {
+                    var iframe = document.createElement('iframe');
+                    iframe.setAttribute('id', 'poll-iframe-' + getPollIdFromUrl(pollSrc));
+                    iframe.setAttribute('scrolling', 'no');
+                    iframe.setAttribute('style', 'border: none; overflow: hidden; width: 100%; height: 0;');
+                    iframe.setAttribute('src', pollSrc + '?service=embed-poll' + (app ? '&app=true' : '') + (noSharing ? '&sharing=false' : ''));
+
+                    embedPollElement.parentNode.insertBefore(iframe, embedPollElement.nextSibling);
+
+                    if (embedPollElement.getAttribute('id')) {
+                        embedPollElement.removeAttribute('class');
+                    } else {
+                        embedPollElement.remove();
+                    }
+                }
+            }
+        })();
+    
+ Mr Griffin adds that in his experience, people who have hybrid cars don't bother charging them most of the time, and just use petrol. The car dealer says that the industry has felt shocks before. "People change their cars all the time. Before the government's tax breaks on diesel cars in 2008, everyone was driving petrol cars. Then people switched to diesel. We follow what the customers want." The fact that the 2030 ban only extends to new fossil fuel powered cars means used car dealers won't feel the pinch straight away, according to Mr Griffin. "There's no demand for used electric cars yet. Demand is dependent on price and range. "The amount of new electric cars which would have to be sold to eliminate petrol and diesel completely is colossal. The infrastructure to go fully electric is also not there. "Every second budget changes. If people receive incentives to buy electric cars, they will buy them. But these grants won't last forever." Andy Warnock from Naas Road Autos, also in Dublin, says it's hard to know if these plans will negatively affect their business. "We'll adapt with the times. We already sell a lot of hybrid cars, but not fully electric cars as the infrastructure isn't there yet." Mr Warnock believes many people buy hybrid or electric cars for economic reasons, not environmental ones. "The hybrid has a dual fuel system [runs on both electricity and petrol], and self-charges. Most people ask about affordability, how many miles to the gallon," he said. Green Party councillor David Healy said people aren't buying electric cars because of the immediate cost. "The support offered is for electric cars with a long range that get up to high speeds. The smaller mirco cars, [cars that take two people] do not get any grants." "You can get €5000 for a fancy, expensive electric sports car, but not for a smaller model which would be ideal for urban areas." Reducing the amount of fossil fuel cars on the road is key, according to the Green Party Councillor, but he feels that too much focus was put on these vehicles. "Unfortunately this isn't enough, the government's plan has no increased investment in public transport," he added. Transport Minister Shane Ross said today that the new policy is "to get people out of private cars because they are the biggest offenders for emissions". Online Editors 

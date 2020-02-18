@@ -1,0 +1,75 @@
+climate change
+{ Breda Heffernan, Caroline O'Doherty and Fiona Dillon 
+    October 07 2019 12:05 PM
+ https://www.independent.ie/irish-news/extinction-rebellion-begins-week-of-action-with-march-through-dublin-38569739.html }
+Several hundred protesters from environmental group Extinction Rebellion are marching through Dublin City centre calling for action on climate change. The activists are preparing to set up camp in Merrion Square Park and plan various events for the week ahead. 
+Close
+ Extinction Rebellion activists at Government buildings. 
+Picture: Mark Condren / Similar events are taking place in capital cities around the world. Up to 135 people had been arrested in London already by 12.30pm. In Dublin, a mock funeral was held outside the gates of the Dail where organiser Corey Rothwell read out a "eulogy" for planet Earth. 
+
+
+        (function() {
+            var getPollIdFromUrl = function(url) {
+                var pollId,
+                    pos = url.lastIndexOf('-');
+
+                if (pos > 0) {
+                    var chunk = url.substr(pos + 1);
+                    pos = chunk.indexOf('.');
+
+                    if (pos > 0) {
+                        pollId = chunk.substr(0, pos);
+                    }
+                }
+
+                return pollId;
+            };
+
+            window.addEventListener('message', function(messageEvent) {
+                try {
+                    var data = JSON.parse(messageEvent.data);
+                    if ((data.type === 'embed-poll-frame-resize') &&
+                        data.src &&
+                        getPollIdFromUrl(data.src) &&
+                        data.height) {
+
+                        var iframe = document.getElementById('poll-iframe-' + getPollIdFromUrl(data.src));
+                        if (iframe && (iframe.offsetHeight !== data.height)) {
+                            console.log('Resizing poll-iframe-' + getPollIdFromUrl(data.src) + ' to ' + data.height + 'px');
+                            iframe.style.height = data.height + 'px';
+                        }
+                    }
+                } catch(e) {}
+            }, false);
+
+            for (var embedPollElements = document.querySelectorAll('.embed-poll'), i = 0, ii = embedPollElements.length; i < ii; i++) {
+                var embedPollElement = embedPollElements.item(i);
+                var pollSrc = embedPollElement.dataset.src;
+                var app = (embedPollElement.dataset.app === 'true');
+                var noSharing = (embedPollElement.dataset.sharing === 'false');
+
+                if (pollSrc) {
+                    var iframe = document.createElement('iframe');
+                    iframe.setAttribute('id', 'poll-iframe-' + getPollIdFromUrl(pollSrc));
+                    iframe.setAttribute('scrolling', 'no');
+                    iframe.setAttribute('style', 'border: none; overflow: hidden; width: 100%; height: 0;');
+                    iframe.setAttribute('src', pollSrc + '?service=embed-poll' + (app ? '&app=true' : '') + (noSharing ? '&sharing=false' : ''));
+
+                    embedPollElement.parentNode.insertBefore(iframe, embedPollElement.nextSibling);
+
+                    if (embedPollElement.getAttribute('id')) {
+                        embedPollElement.removeAttribute('class');
+                    } else {
+                        embedPollElement.remove();
+                    }
+                }
+            }
+        })();
+    
+ "Farewell Eden, farewell futures that will never be, farewell ice," he said. "Farewell Starbucks, Tesco and online shopping. 
+Close
+ Protests took place in major cities worldwide, including Berlin (AP) AP/PA Images / "Farewell fossil fuels, farewell capitalism," he added. He said the activists were "trying to be an alarm bell, a canary in the coal mine" to warn the Government about the need to take action to combat climate change. Another organiser, Lorna Tierney from Co Kildare, said she was planning to join fellow activists and camp out in Merrion Square Park tonight. Extinction Rebellion protests are taking place in cities around the world and already there have been a number of arrests. 
+Close
+ Supporters of the Extinction Rebellion movement block a road at the Victory Column in Berlin (AP) / Ms Tierney said she didn't expect to see something similar happen in Dublin this week. "The guards are not the enemy. We don't plan to be causing too much trouble," she said. Climate activists from the Extinction Rebellion movement also staged their first pop-up protest in Dublin’s financial district during the evening rush hour on Monday. Around 60 protesters stopped traffic outside Connolly Station for about ten minutes at 5pm before marching through the International Financial Services Centre (IFSC). They stopped outside banks and investment houses, shouting to workers peering out the windows with chants of ‘leave your desks, join the march’. Their final stop was at the offices of consultants, PwC, which carried out research highlighting the economic importance of the oil and gas industry which was cited earlier this year by opponents to the Climate Emergency Measures Bill which had sought to ban exploration licences. Around a dozen Gardai monitored the protest which lasted about half and hour and ended with protesters using loudspeakers to invite PwC staff to join them for lentils and coffee at their Merrion Square base where they have set up camp for the week. The group, which formally opened its camp with a scheduled march and delivery of letters to Government departments during Monday’s lunchtime, has said it will stage surprise daily marches, roadblocks and ‘swarming’ operations to disrupt what they describe as the Government’s ‘business as usual’ attitude to the climate crisis. The protests begin as restaurant owners said they fear 'no-shows' if customers are deterred from visiting Dublin's city centre by the climate change protests. 
+Close
+ Protesters block the road at the Extinction Rebellion protest in Trafalgar Square, London. PA Photo. Jonathan Brady/PA Wire  PA / Adrian Cummins, chief executive of the Restaurants' Association of Ireland, said people will try to avoid the city centre if they think there is going to be gridlock. "I think it has to be managed properly," he told Independent.ie. "Every cancellation that we have in our restaurants, that's lost revenue to an industry that is struggling at the moment." He said his members were "concerned" but he hoped the public would use public transport or other means to make their way into the city centre. He said that the margins in the industry are "very tight". Restaurants have seen a drop in the number of UK visitors and are already feeling the effects of Brexit. Mr Cummins said this was a quiet time before the Christmas period, "so all of this doesn't help our business model". Annette Jorgensen, a spokesperson for Extinction Rebellion Ireland, said people from all over the country were set to attend today's events. "We don't want to target any particular individual business owner. We are on their side. We feel that the Government has left us with no other choice. "We feel we have tried absolutely everything, we have signed petition after petition, and emailed and phoned politicians. We had demonstrations, and they are still leading us down the road to absolute disaster, a disaster that will be so much worse than any disruption that we are able to cause in a week in Dublin." She said the economy would "completely collapse" if climate chaos happens "and that is what we are trying to avoid by doing this". "The main people we are trying to communicate with here is the Government. We want them to acknowledge how serious the situation is. And that means they have to look at the science and take it on board." A campsite will be set up at a nearby location, with a kitchen and a canteen. "It's a family friendly atmosphere," Ms Jorgensen said. The week will end next Sunday with an inter-faith vigil for victims of climate change around the world, she said, adding each day has a different theme. A Garda spokesperson said gardaí have "a role in ensuring that peaceful protests can take place, and also in preventing injury and protecting life. Our objective with any such operation is to ensure the safety of the public. "We respect people's right to peaceful protest and will facilitate same." Meanwhile, more than 160 Irish academics had signed a letter of support for Extinction Rebellion yesterday. London The protests in Ireland were echoed on the streets of cities around the world. In London, police arrested 135 activists from the Extinction Rebellion group as they blocked bridges and roads in the city centre, and glued themselves to cars, while protesters in Berlin halted traffic at the Victory Column roundabout. Dutch police stepped in to arrest more than 100 climate change activists blocking a street in front of the country's national museum and there were similar protests in Austria, Spain, New Zealand and Australia. "SORRY that we blocked the road, but this is an emergency," declared placards held by activists in Amsterdam. Banging drums and chanting, protesters in London took over Trafalgar Square and marched down the Mall, the avenue that leads to Buckingham Palace, carrying banners with slogans such as "Climate change denies our children a future unless we act now". "We're here because the government is not doing enough on the climate emergency," protester Lizzy Mansfield said in London. "We only get one planet and so we're here to try and defend it." Police chiefs said last week they would mobilise thousands of officers to handle the protests in London and anyone who broke the law, even as part of non-violent civil disobedience, would be arrested. On Saturday, officers used a battering ram to enter a building in south London where activists had been storing materials to use during the protests. Eight people were arrested during the raid. Defying almost freezing temperatures in Berlin, activists singing "Solid as a rock, rooted as a tree" gathered at dawn at the Victory Column roundabout near Berlin's Tiergarten park. At sunrise, some were sleeping in insulated bags in the middle of the roundabout as police on motorbikes drove by. No arrests were made and the protest remained peaceful. Police blocked the five avenues that converge on the roundabout to stop cars and buses reaching the demonstration, as it would have resulted in traffic chaos during rush hour. By midday, the protest had swelled to 4,000 people, a policeman said, and a second main roundabout was also blocked by activists sitting in the middle of the road. The rally came as German Chancellor Angela Merkel defended climate protection measures her government is due to approve on Wednesday that have been condemned by critics as unambitious. In Amsterdam, police were lining up empty city buses to take the arrested demonstrators away as they tried to clear a major thoroughfare in the afternoon. "The climate crisis is not being taken seriously enough by politics, and also not by the companies. That's why I joined," said one demonstrator, who gave his name as Christiaan. Meanwhile activists in London, some wearing yellow safety helmets with "Rebel at Work" painted on the side, glued or chained themselves to cars parked in the middle of roads or to street lamps, making it hard for police officers to detain them. "We are out of time, there is none left, we have to act now," said a protester called Benjamin. Addtional reporting by PA and Reuters Online Editors 
