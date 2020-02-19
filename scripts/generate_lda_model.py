@@ -236,9 +236,10 @@ def save_data(newspaper_list, company_tag):
             # print(listitem)
             filehandle.write('%s\n' % listitem)
 
-def create_word_corpus(articles):
+def create_word_corpus(articles, company_tag):
     word_corpus = {}
     unique_words = []
+
     for article in articles.data:
         # Extract the parts of the article
         article_parts = article.split('\r\n')
@@ -283,8 +284,67 @@ def create_word_corpus(articles):
                             word_corpus[word].append(topic_name + ':::' + author_name + ':::' + article_date + ':::' + sentence)
                         else:
                             word_corpus[word].append(topic_name + ':::' + author_name + ':::' + article_date + ':::' + sentence)
+
     # for word in word_corpus:
     #     print('WORD: ' + word + ' POINTS TO ', word_corpus[word])
+
+    # Add the bigrams to the word corpus
+
+    bigram_word_corpus = retrieve_bigram_word_corpus(company_tag)
+    topic_name_bigram = ''
+    author_name_bigram = ''
+    article_date_bigram = ''
+    sentence_bigram = ''
+
+
+    # Convert bigram_word_corpus to a list:
+    for bigram_word in bigram_word_corpus:
+        # Get words frm bigram
+        word1, word2 = bigram_word.split('_')
+
+        # Get word parts
+        word1_parts = word_corpus[word1].split(':::')
+        word2_parts = word_corpus[word2].split(':::')
+
+        # Get topic_name from bigram
+        topic1_name = word1_parts[0]
+        topic2_name = word2_parts[0]
+        # Get author_name for bigram
+        author1_name = word1_parts[1]
+        author2_name = word2_parts[1]
+
+        # Get article_date for bigram
+        article1_date = word1_parts[2]
+        article2_date = word2_parts[2]
+
+        # Get article sentence for bigram
+        article1_sentence = word1_parts[3]
+        article2_sentence = word2_parts[3]
+
+        # For now have both if and else have same result, but the else will be more
+        # complicated in future revisions, taking account more data
+        if topic1_name == topic2_name:
+            topic_name_bigram = topic1_name
+        else:
+            topic_name_bigram = topic1_name
+        
+        if author1_name == author2_name:
+            author_name_bigram = author1_name
+        else:
+            author_name_bigram = author1_name
+
+        if article1_date == article2_date:
+            article_date_bigram = article1_date
+        else:
+            article_date_bigram = article1_date
+
+        if article1_sentence == article2_sentence:
+            sentence_bigram = article1_sentence
+        else:
+            sentence_bigram = article1_sentence
+
+        word_corpus[bigram_word].append(topic_name_bigram + ':::' + author_name_bigram + ':::' + article_date_bigram + ':::' + sentence_bigram)
+
     
     return word_corpus
 
@@ -295,6 +355,38 @@ def save_word_corpus(word_corpus, company_tag):
 
     with open(FULL_WORD_CORPUS_PATH, 'wb') as myFile:
         pickle.dump(word_corpus, myFile)
+
+def retrieve_bigram_word_corpus(company_tag):
+    WORD_CORPUS_PATH = "../newspaper_data/bigram_word_corpus/" + company_tag + '.txt'
+
+    FULL_WORD_CORPUS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), WORD_CORPUS_PATH))
+
+    with open(FULL_WORD_CORPUS_PATH, 'rb') as myFile:
+         word_corpus = pickle.load(myFile)
+    
+    return word_corpus
+
+def make_bigram_word_corpus(cleaned_data, company_tag):
+    WORD_CORPUS_PATH = "../newspaper_data/bigram_word_corpus/" + company_tag + '.txt'
+    FULL_WORD_CORPUS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), WORD_CORPUS_PATH))
+
+    unique_bigram_list = []
+    bigram_word_corpus = {}
+
+    # Grab the bigrams so we can append them to our corpus
+    for article in cleaned_data:
+        for word in article:
+            if '_' in word:
+                if word not in unique_bigram_list:
+                    bigram_word_corpus[word] = []
+                    unique_bigram_list.append(word)
+                    bigram_word_corpus[word].append('')
+                else:
+                    unique_bigram_list.append(word)
+                    bigram_word_corpus[word].append('')
+    
+    with open(FULL_WORD_CORPUS_PATH, 'wb') as myFile:
+        pickle.dump(bigram_word_corpus, myFile) 
 
 
 def main():
@@ -318,20 +410,29 @@ def main():
     independent_data_cleaned = clean_data(independent_bunch, company_tags[0])
     print('Finished cleaning data...')
 
-    # save_newspaper_data for independent
-    save_data(independent_data_cleaned, company_tags[0])
-    print('Finished saving cleaned_data...')
+    # # save_newspaper_data for independent
+    # save_data(independent_data_cleaned, company_tags[0])
+    # print('Finished saving cleaned_data...')
 
-    # Algo for corpus that points to everythiung
-    # 1. Each word in dict points to a list with every sentence it is in
-    # 2. The list has topicname and date appended to start
-    # 3. Crux is looping through each word and assigning the sentence and all else
-    # 'abortion\r\n{ Lyndsey Telford \r\n
+    # Ran once to cretae bigram list in a file
+    # Creates a list of all of the bigram words within the corpus and stores it in a fie
+    # make_bigram_word_corpus(independent_data_cleaned, company_tags[0])
+
+    # # Algo for corpus that points to everythiung
+    # # 1. Each word in dict points to a list with every sentence it is in
+    # # 2. The list has topicname and date appended to start
+    # # 3. Crux is looping through each word and assigning the sentence and all else
+    # # 'abortion\r\n{ Lyndsey Telford \r\n
 
     # Atm need to change to have bigrams in dictionary
-    word_corpus = create_word_corpus(independent_bunch)
+    word_corpus = create_word_corpus(independent_bunch, company_tags[0])
 
     save_word_corpus(word_corpus, company_tags[0])
+
+
+
+
+
 
     # # # Create dictionary. This maps id to the word
     # word_dict = corpora.Dictionary(independent_data_cleaned)
