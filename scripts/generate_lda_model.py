@@ -239,6 +239,7 @@ def save_data(newspaper_list, company_tag):
 def create_word_corpus(articles, company_tag):
     word_corpus = {}
     unique_words = []
+    print('STARTING TO CREATE WORD CORPUS...')
 
     for article in articles.data:
         # Extract the parts of the article
@@ -289,7 +290,7 @@ def create_word_corpus(articles, company_tag):
     #     print('WORD: ' + word + ' POINTS TO ', word_corpus[word])
 
     # Add the bigrams to the word corpus
-
+    print('Starting to add bigrams to the word corpus...')
     bigram_word_corpus = retrieve_bigram_word_corpus(company_tag)
     topic_name_bigram = ''
     author_name_bigram = ''
@@ -299,51 +300,63 @@ def create_word_corpus(articles, company_tag):
 
     # Convert bigram_word_corpus to a list:
     for bigram_word in bigram_word_corpus:
+        word1_list = []
+        word2_list = []
+
+        topic1_name = topic2_name = author1_name = author2_name = article1_date = article2_date = article1_sentence = article2_sentence = ''
+
         # Get words frm bigram
         word1, word2 = bigram_word.split('_')
 
-        # Get word parts
-        word1_parts = word_corpus[word1].split(':::')
-        word2_parts = word_corpus[word2].split(':::')
+        # In future revisions don't include only last bigram in array, take maximum count
+        for word1, word2 in zip(word_corpus[word1],  word_corpus[word2]):
+            
+            # Get word_parts for word1
+            word_parts = word1.split(':::')
+            # Get topic_name from bigram
+            topic1_name = word_parts[0]
+            # Get author_name for bigram
+            author1_name = word_parts[1]
+            # Get article_date for bigram
+            article1_date = word_parts[2]
+            # Get article sentence for bigram
+            article1_sentence = word_parts[3]
 
-        # Get topic_name from bigram
-        topic1_name = word1_parts[0]
-        topic2_name = word2_parts[0]
-        # Get author_name for bigram
-        author1_name = word1_parts[1]
-        author2_name = word2_parts[1]
-
-        # Get article_date for bigram
-        article1_date = word1_parts[2]
-        article2_date = word2_parts[2]
-
-        # Get article sentence for bigram
-        article1_sentence = word1_parts[3]
-        article2_sentence = word2_parts[3]
-
-        # For now have both if and else have same result, but the else will be more
-        # complicated in future revisions, taking account more data
-        if topic1_name == topic2_name:
-            topic_name_bigram = topic1_name
-        else:
-            topic_name_bigram = topic1_name
+            # Grab the parts of the word2
+            word_parts = word2.split(':::')
+            # Get topic_name from bigram
+            topic2_name = word_parts[0]
+            # Get author_name for bigram
+            author2_name = word_parts[1]
+             # Get article_date for bigram
+            article2_date = word_parts[2]
+             # Get article sentence for bigram
+            article2_sentence = word_parts[3]
         
-        if author1_name == author2_name:
-            author_name_bigram = author1_name
-        else:
-            author_name_bigram = author1_name
+            # For now have both if and else have same result, but the else will be more
+            # complicated in future revisions, taking account more data
+            if topic1_name == topic2_name:
+                topic_name_bigram = topic1_name
+            else:
+                topic_name_bigram = topic1_name
+            
+            if author1_name == author2_name:
+                author_name_bigram = author1_name
+            else:
+                author_name_bigram = author1_name
 
-        if article1_date == article2_date:
-            article_date_bigram = article1_date
-        else:
-            article_date_bigram = article1_date
+            if article1_date == article2_date:
+                article_date_bigram = article1_date
+            else:
+                article_date_bigram = article1_date
 
-        if article1_sentence == article2_sentence:
-            sentence_bigram = article1_sentence
-        else:
-            sentence_bigram = article1_sentence
+            if article1_sentence == article2_sentence:
+                sentence_bigram = article1_sentence
+            else:
+                sentence_bigram = article1_sentence
 
-        word_corpus[bigram_word].append(topic_name_bigram + ':::' + author_name_bigram + ':::' + article_date_bigram + ':::' + sentence_bigram)
+            # Add the bigram
+            word_corpus[bigram_word].append(topic_name_bigram + ':::' + author_name_bigram + ':::' + article_date_bigram + ':::' + sentence_bigram)
 
     
     return word_corpus
@@ -407,8 +420,8 @@ def main():
     print('Finished loading newspaper data...')
 
     # # Clean newsdata:
-    independent_data_cleaned = clean_data(independent_bunch, company_tags[0])
-    print('Finished cleaning data...')
+    # independent_data_cleaned = clean_data(independent_bunch, company_tags[0])
+    # print('Finished cleaning data...')
 
     # # save_newspaper_data for independent
     # save_data(independent_data_cleaned, company_tags[0])
@@ -428,10 +441,6 @@ def main():
     word_corpus = create_word_corpus(independent_bunch, company_tags[0])
 
     save_word_corpus(word_corpus, company_tags[0])
-
-
-
-
 
 
     # # # Create dictionary. This maps id to the word
