@@ -10,7 +10,7 @@ goto :eof
 
 :gotMalletHome
 
-set MALLET_CLASSPATH=C:\Users\micha\OneDrive\Desktop\News-Article-Topic-Modelling\mallet_2\mallet-2.0.8\class;C:\Users\micha\OneDrive\Desktop\News-Article-Topic-Modelling\mallet_2\mallet-2.0.8\lib\mallet-deps.jar
+set MALLET_CLASSPATH=C:\Users\micha\OneDrive\Desktop\news_article_stance_detection_updated\mallet_2\mallet-2.0.8\class;C:\Users\micha\OneDrive\Desktop\news_article_stance_detection_updated\mallet_2\mallet-2.0.8\lib\mallet-deps.jar
 set MALLET_MEMORY=1G
 set MALLET_ENCODING=UTF-8
 

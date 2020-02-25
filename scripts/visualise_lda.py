@@ -1,6 +1,8 @@
 import os
 import pickle
 from pprint import pprint
+from collections import defaultdict
+import copy
 
 # NLP libraries
 import gensim
@@ -15,6 +17,7 @@ from sklearn.datasets import load_files
 from nltk.corpus import wordnet as wn
 from sentiment import Sentiment
 import textblob as tb
+import generate_lda_model
 
 # Visualisation libraries.
 import pyLDAvis.gensim
@@ -226,7 +229,8 @@ def print_topic_words(lda_mallet_model):
 
         print('Most likely topic: {} {} \nMost weighted Words: {}'.format(index, topic_word, '|'.join([w[0] for w in topic])))
 
-def sent(x):
+def getSentiment(x):
+    # print(x)
     t = tb.TextBlob(x)
     return t.sentiment.polarity, t.sentiment.subjectivity
 
@@ -246,23 +250,26 @@ def getRealTopic(topic, word_corpus):
         # Do for only first 10 words, but try with 30 and check if accuracy is changing
 
         # 1. For w[0] get all sentences where the word is used (from a premade corpus dictionary that matches a word to each occurence and the topic name in the folder)
-        for word in word_corpus[w[0]]:
-            # The error here is we didn't account for bigrams
-            word_parts = word.split(':::')
-            topic.append(word_parts[0])
-            # 2. For each sentence grab most common topic name, as since these are the most weighted words for that topic it is likely to be this topic
-            # return topic word
-        topic_word = most_frequent_topic(topic)
+        if w[0] in word_corpus.keys():
+            for word in word_corpus[w[0]]:
+                # The error here is we didn't account for bigrams
+                word_parts = word.split(':::')
+                # Bug could be if topic name was not appended due to some error, could return random data for files!
+                topic_list.append(word_parts[0])
+                # 2. For each sentence grab most common topic name, as since these are the most weighted words for that topic it is likely to be this topic
+                # return topic word
+            topic_word = most_frequent_topic(topic_list)
 
     return topic_word
 
-def get_topic_sentences(topic, sentences):
+# Topic and word that equates to topic and sentence in array
+def get_topic_sentences(topic, topic_sentences):
     topical_sentences = []
 
-    for sentence in sentences:
-        sentence_parts = sentence.split(':::')
-        sentence_topic = sentence_parts[0]
-        full_sentence = sentence_parts[3]
+    for topic_sentence in topic_sentences:
+        topic_sentence_parts = topic_sentence.split(':::')
+        sentence_topic = topic_sentence_parts[0]
+        full_sentence = topic_sentence_parts[3]
 
         if sentence_topic == topic:
             topical_sentences.append(full_sentence)
@@ -271,43 +278,71 @@ def get_topic_sentences(topic, sentences):
     
     return topical_sentences
 
+def defaultTopicValue():
+    return []
+
 # Uses top 30 words per topic to calculate polarity and subjectivity of each topic
-def correlate_top_words_sentiment(lda_mallet_model, word_corpus):
+def correlate_top_words_sentiment(lda_mallet_model, word_corpus, company_tag):
     topic_sentiments = {}
+    word_list = []
+    topic_word_dict = defaultdict(defaultTopicValue)
     polarity = []
     subjectivity = []
+    isSciObj = False
 
     # Try for 10 num words as well as 30 and see which is more  accurate
-    for index, topic in lda_mallet_model.show_topics(num_topics=19, formatted=False, num_words= 30):
+    for index, topic in lda_mallet_model.show_topics(num_topics=19, formatted=False): #, num_words= 30):
+        current_topic = topic
 
         # Grabs the topic_name using a probabilistic approach
-        # More accurate as using top 30 words from each topic
-        topic_name = getRealTopic(topic, word_corpus)
+        # More accurate as using top 30 / 5 words from each topic
 
+        # getRealTopic kills everything and separates it into letters - why?
+        topic_name = getRealTopic(current_topic, word_corpus)
+        # print('Most likely topic: {} \nMost weighted Words: {}'.format(topic_name, '|'.join([w[0] for w in topic])))
+        
         for w in topic:
-            # Clean arrays to refresh for new topic
-            polarity = []
-            subjectivity = []
-            # Polarity = Pos or Neg where 1 is pos and -1 is neg. Subjectivity is between 0, 1 where 0 is objective and 1 is emotional
-            # print('w[0] = (is topic word) and w[1] = some score)
+            if w[0] in word_corpus.keys():
+                # Only get the w[0] of the topic that has topic_name in the sentence of that word
+                sentences = get_topic_sentences(topic_name, word_corpus[w[0]])
+                word_list.append(w[0])
+            else:
+                continue
 
-            # Only get the w[0] of the topic that has topic_name in the sentence of that word
-            sentences = get_topic_sentences(topic, word_corpus[w[0]])
+            sentences_cleaned_list = generate_lda_model.clean_data(sentences, company_tag, isSciObj)
 
-            for sentence in sentences:
-                pol, subjec = sent(sentence)
+            for sentence in sentences_cleaned_list:
+                sentence_str = ' '.join([str(word) for word in sentence])
+                pol, subjec = getSentiment(sentence_str)
                 polarity.append(pol)
                 subjectivity.append(subjec)
         
+        # print('Finished new word: \'' + w[0] + ' (This was last word in set) ' + '\' inside topic ' + topic_name)
         # Calculate average polarity and subjectivity per words
         avg_polarity = sum(polarity) / len(polarity)
         avg_subjectivity = sum(subjectivity) / len(subjectivity)
 
+        # Name of topic is index and points to average polarity and subjectivity score
 
-        topic_sentiments[index] = [avg_polarity, avg_subjectivity]
+        if topic_name not in topic_sentiments.keys():
+            print('Added topic: ' + topic_name)
+            topic_sentiments[topic_name] = [avg_polarity, avg_subjectivity]
+
+            topic_word_dict[topic_name].append(word_list[:])
+            # topic_word_dict[topic_name] = defaultdict(lambda: copy.deepcopy(word_list))
+        else:
+            print('Doubled up topic to dominant topic')
+            print('Topic name is: ' + topic_name)
+        
+        for words in topic_word_dict:
+            print(topic_word_dict[words])
+        
+        # Clear list each time
+        word_list[:] = []
+
         print('For topic {}, probably: {} the average polarity is {} and the average subjectivity is {}'.format(index, topic_name, avg_polarity, avg_subjectivity))
     
-    return topic_sentiments
+    return (topic_sentiments, topic_word_dict)
 
 def retrieve_word_corpus(company_tag):
     WORD_CORPUS_PATH = "../newspaper_data/word_corpus/" + company_tag + '.txt'
@@ -318,6 +353,21 @@ def retrieve_word_corpus(company_tag):
          word_corpus = pickle.load(myFile)
     
     return word_corpus
+
+def write_topic_sentiments(topic_sentiments, topic_word_dict, company_tag):
+    SENTIMENTS_PATH = "../newspaper_data/sentiments/" + company_tag + '.txt'
+
+    FULL_SENTIMENTS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), SENTIMENTS_PATH))
+
+    word_li = []
+
+    with open(FULL_SENTIMENTS_PATH, 'w') as myFile:
+        for index, topic_name in enumerate(topic_sentiments):
+            for words in topic_word_dict:
+                for word in topic_word_dict[words]:
+                    word_li.append(word)
+            topic_info = "Index: {} Topic: {} Sentiment: {} Polarity: {} Words: {}\n".format(index, topic_name, topic_sentiments[topic_name][0], topic_sentiments[topic_name][1], topic_word_dict[topic_name])
+            myFile.write(topic_info)
 
 
 def main():
@@ -345,9 +395,11 @@ def main():
     
     # At the moment not using full sentences, need method to retrieve full sentence
     # Use textblob and correlate top used words to their sentiment and average per topic
-    topic_sentiments = correlate_top_words_sentiment(lda_mallet_model, word_corpus)
+    topic_sentiments, topic_word_dict = correlate_top_words_sentiment(lda_mallet_model, word_corpus, company_tags[0])
 
-    # # print_topic_words(lda_mallet_model)
+    write_topic_sentiments(topic_sentiments, topic_word_dict, company_tags[0])
+
+    # print_topic_words(lda_mallet_model)
 
     # # Find the dominant topic
     # df_topic_sents_keywords = format_topics_sentences(ldamodel=lda_mallet_model, corpus=corpus, texts=article_word_list[:-1])
@@ -407,7 +459,7 @@ def main():
     # pprint(model.get_document_topics(bow))
 
     # # Show top 30 topics (with weights)
-    # pprint(FIND_TAG + lda.show_topics(30))
+    # pprint(FIND_TAG + lda_mallet_model.show_topics(30))
 
     ## Does not work Below, only test!!!!
     # # Format

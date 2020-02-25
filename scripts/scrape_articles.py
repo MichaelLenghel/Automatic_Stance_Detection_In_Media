@@ -7,6 +7,7 @@ import csv
 import re
 import time
 import string
+from builtins import any as b_any
 
 # Scraping articles over 2019
 class WebScrapeArticles:
@@ -15,7 +16,7 @@ class WebScrapeArticles:
         # News Company Tags+
         self.new_york_times_tag = "NEW_YORK_TIMES"
         self.irish_times_tag = 'IRISH-TIMES'
-        self.bbc_tag = "BBC"
+        self.daily_mail_tag = "DAILY_MAIL"
         self.independent_tag = "INDEPENDENT"
 
         self.call_tag = ''
@@ -27,7 +28,7 @@ class WebScrapeArticles:
 
         self.EXTENSION = "_LINKS.txt"
         self.refined_news_categories = ['brexit', 'climate.change', 'stocks'
-            , 'world', 'sport.gaa' ,'sport.football'
+            , 'sport.gaa' ,'sport.football'
             , 'trump', 'politics', 'medicine'
             , 'cars', 'middle.east', 'abortion'
             , 'christianity', 'drugs'
@@ -42,6 +43,18 @@ class WebScrapeArticles:
         links = []
         print('PROGRAM STARTING EXECUTION...')
 
+        if newsCompany == self.daily_mail_tag:
+            page_range = 12
+            link_range = 11
+        elif newsCompany ==  self.independent_tag:
+            # Iterate 40 times which is 40 times 10 perage so 400 articles per topic. The problem is that some links or pages are dead, aim for 60.
+            page_range = 61
+            # Iterate 10 times, since, 10 pages per result
+            link_range = 11
+        else:
+            print('No expected page range specified')
+            return 'ERROR 404 ADD CODE FOR COMPANY SCRAPE'
+
         # Will be pulling links until the end of this method
         self.pull_links = True
 
@@ -53,21 +66,19 @@ class WebScrapeArticles:
             if '.' in topic:
                 topic = ' '.join(topic.split('.'))
 
-            # Iterate 40 times which is 40 times 10 perage so 400 articles per topic. The problem is that some links or pages are dead, aim for 60.
-            for page_number in range(1, 61):
-                # Iterate 10 times, since, 10 pages per result
-                for link_number in range (1, 11):
-                    if newsCompany == self.independent_tag:
-                        links = self.getIndependentArticleLinks(topic, page_number)
-                    elif newsCompany == self.bbc_tag:
-                        links = self.getBBCArticleLinks(topic, page_number)
-                    elif newsCompany == self.irish_times_tag:
-                        links = self.getITArticleLinks(topic, page_number)
-                    elif newsCompany == self.new_york_times_tag:
-                        links = self.getNYTArticleLinks(topic, page_number)
+            for page_number in range(1, page_range):
+                # for link_number in range (1, link_range):
+                if newsCompany == self.independent_tag:
+                    links = self.getIndependentArticleLinks(topic, page_number)
+                elif newsCompany == self.daily_mail_tag:
+                    links = self.getDailyMailArticleLinks(topic, page_number)
+                elif newsCompany == self.irish_times_tag:
+                    links = self.getITArticleLinks(topic, page_number)
+                elif newsCompany == self.new_york_times_tag:
+                    links = self.getNYTArticleLinks(topic, page_number)
         
                 self.write_to_file(links, newsCompany, topic)
-                print('ANOTHER PAGE OF LINKS EXTRACTED... ' + str(link_number))
+                print('ANOTHER PAGE OF LINKS EXTRACTED... ' + str(page_number) + ' FOR TOPIC ' + topic)
 
             print('TOPIC ' + topic + ' HAS FINISHED EXECUTING')
 
@@ -76,6 +87,7 @@ class WebScrapeArticles:
     
     def getIndependentArticleLinks(self, topic, page_number):
         links = []
+
         try:
             page_number = (page_number - 1) * 10
 
@@ -101,13 +113,54 @@ class WebScrapeArticles:
 
         except AttributeError:
             print('Failed to find what we looked for')
-            print('Sleeping to stop IP block...')
+            print('Sleeping...')
             time.sleep(10)
         
         return links
     
-    def getBBCArticleLinks(self, topic, page_number):
-        return ''   
+    def getDailyMailArticleLinks(self, topic, page_number):
+        links = []
+        page_distance = 50
+        off_set = until = 0
+
+        # Unlike independent, daily mail does not store topic in news article and must append this manually
+        url_apendix = "|" + topic
+
+        try:
+            off_set = (page_number - 1) * page_distance
+            if page_number == 1:
+                until = page_distance
+            else:
+                until = ((page_number - 1) * page_distance) * 2
+
+            url = ('https://www.dailymail.co.uk/home/search.html?offset={}&size={}&sel=site&searchPhrase={}&sort=recent&type=article&type=video&type=permabox&days=all'.format(off_set, until, topic))
+
+            # Get the html for the page
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'lxml')
+
+            # 1. Get the articles div
+            articles_div = soup.find('div',attrs={'class':'sch-results'})
+
+            # Get all of the divs that contain links
+            article_divs = articles_div.findAll('div')
+
+            # 2. First 2 and last article div does not contain links
+            for article in article_divs[2:-1]:
+                for url in article.findAll('a'):
+                    if '#' not in url.get('href'):
+                        # Ensure the link has not already been added somehow
+                        if not b_any(url.get('href') in link for link in links):
+                            # print('https://www.dailymail.co.uk/' + url.get('href'))
+                            links.append('https://www.dailymail.co.uk/' + url.get('href') + url_apendix)
+
+
+        except AttributeError:
+            print('Failed to find what we looked for')
+            print('Sleeping...')
+            time.sleep(10)
+
+        return links  
     
     def getITArticleLinks(self, topic, page_number):
 
@@ -122,8 +175,8 @@ class WebScrapeArticles:
 
         if news_comapny == self.independent_tag:
             article = self.getIndependentArticle(url)
-        elif news_comapny == self.bbc_tag:
-            article = self.getBBCArticle(url)
+        elif news_comapny == self.daily_mail_tag:
+            article = self.getDailyMailArticle(url)
         elif news_comapny == self.irish_times_tag:
             article = self.getITArticle(url)
         elif news_comapny == self.new_york_times_tag:
@@ -186,8 +239,53 @@ class WebScrapeArticles:
         return url
             
 
-    def getBBCArticle(self, url):
-        return ""
+    def getDailyMailArticle(self, urlTopic):
+        url, topic = urlTopic.split('|')
+        article = ''
+         # Header holds the date of article, url and author
+        header = ''
+
+        try:
+            response = requests.get(url) # , headers=ua)
+
+            soup = BeautifulSoup(response.text, 'lxml')
+
+            # Get the author
+            author = soup.find('p',attrs={'class':'author-section byline-plain'})
+
+            # Get the date of the article
+            date = soup.find('span',attrs='article-timestamp article-timestamp-published')
+
+            header = '{ ' + author.text + ' ' + date.text + ' ' + url + ' }' + '\n'
+
+            # Get the paragraphs of the article
+            articleDivs = soup.find('div', attrs={'itemprop':'articleBody'})
+            paras = articleDivs.findAll('p', attrs={'class':'mol-para-with-font'})
+            
+            for para in paras:
+                article += ''.join(para.findAll(text=True)) + ' '
+            
+            if article == '':
+                paras = articleDivs.findAll('p')
+                for para in paras:
+                    article += ''.join(para.findAll(text=True)) + ' '
+
+            with self.lock:
+                # Write articles to corpus
+                self.write_to_file(header + article, self.daily_mail_tag, topic)
+
+        except AttributeError:
+            print('Failed to find what we looked for at link, ' + url)
+            # When failed to read file, IP blocked,
+            # send file to other dir and can read it later
+            self.write_dead_file_to_dir(url, self.daily_mail_tag)
+            print('Sleeping to stop IP block...')
+            time.sleep(20)
+
+        except UnicodeEncodeError:
+            print('UniCodeEncodeError occured at link' + url)
+
+        return url
 
     def getITArticle(self, utl):
         return ""
@@ -210,8 +308,8 @@ class WebScrapeArticles:
         # Get all links in an object
         if self.call_tag == self.independent_tag:
             links = self.getCorpusLinks(self.independent_tag, topic)
-        elif self.call_tag == self.bbc_tag:
-            links = self.getCorpusLinks(self.bbc_tag, topic)
+        elif self.call_tag == self.daily_mail_tag:
+            links = self.getCorpusLinks(self.daily_mail_tag, topic)
         elif self.call_tag == self.irish_times_tag:
             links = self.getCorpusLinks(self.irish_times_tag, topic)
         elif self.call_tag == self.new_york_times_tag:
@@ -230,7 +328,6 @@ class WebScrapeArticles:
         self.q.join()
         self.run = False
         
-    
     def getCorpusLinks(self, tag, topic):
         links = []
         DATA_PATH = "../newspaper_data/links/" + topic + "/"
@@ -240,8 +337,8 @@ class WebScrapeArticles:
             DATA_PATH = DATA_PATH + self.irish_times_tag + self.EXTENSION
         elif tag == self.independent_tag:
             DATA_PATH = DATA_PATH + self.independent_tag + self.EXTENSION
-        elif tag == self.bbc_tag:
-            DATA_PATH = DATA_PATH + self.bbc_tag + self.EXTENSION
+        elif tag == self.daily_mail_tag:
+            DATA_PATH = DATA_PATH + self.daily_mail_tag + self.EXTENSION
         elif tag == self.new_york_times_tag:
             DATA_PATH = DATA_PATH + self.new_york_times_tag + self.EXTENSION
 
@@ -250,8 +347,12 @@ class WebScrapeArticles:
         with open(newspaper_list_file, 'r') as filehandle:
             lines = filehandle.read().splitlines()
             
-            for line in lines:
-                links.append(line + topic)
+            if tag == self.daily_mail_tag:
+                for line in lines:
+                    links.append(line)
+            else:
+                for line in lines:
+                    links.append(line + topic)
         
         return links
     
@@ -271,8 +372,8 @@ class WebScrapeArticles:
 
         if tag == self.independent_tag:
             DATA_PATH = DATA_PATH + self.independent_tag + self.EXTENSION
-        elif tag == self.bbc_tag:
-            DATA_PATH = DATA_PATH + self.bbc_tag + self.EXTENSION
+        elif tag == self.daily_mail_tag:
+            DATA_PATH = DATA_PATH + self.daily_mail_tag + self.EXTENSION
         elif tag == self.irish_times_tag:
             DATA_PATH = DATA_PATH + self.irish_times_tag + self.EXTENSION
         elif tag == self.new_york_times_tag:
@@ -284,7 +385,7 @@ class WebScrapeArticles:
             filehandle.write('%s\n' % url)
 
         
-
+    # self.write_to_file(article, tag, topic)
     def write_to_file(self, news_data, tag=None, topic=""):
         DATA_PATH = ""
         # Evalues to fasle if string is empty
@@ -305,9 +406,9 @@ class WebScrapeArticles:
             elif tag == self.independent_tag:
                 DATA_PATH = DATA_PATH + topic
                 FILE_PATH = '/' + self.independent_tag + self.EXTENSION
-            elif tag == self.bbc_tag:
+            elif tag == self.daily_mail_tag:
                 DATA_PATH = DATA_PATH + topic
-                FILE_PATH = '/' + self.bbc_tag + self.EXTENSION
+                FILE_PATH = '/' + self.daily_mail_tag + self.EXTENSION
         # Write the newspaper data (articles)
         else:
             DATA_PATH = "../corpus/irishArticles/"
@@ -318,8 +419,8 @@ class WebScrapeArticles:
                 DATA_PATH =  DATA_PATH + self.new_york_times_tag + '/' + topic
             elif tag == self.independent_tag:
                 DATA_PATH =  DATA_PATH + self.independent_tag + '/' + topic
-            elif tag == self.bbc_tag:
-                DATA_PATH =  DATA_PATH + self.bbc_tag + '/' + topic
+            elif tag == self.daily_mail_tag:
+                DATA_PATH =  DATA_PATH + self.daily_mail_tag + '/' + topic
             else:
                 print('No article path specified!')
 
@@ -360,14 +461,10 @@ def main():
     # Get articles for the independent
     # articles.buildArticles(articles.independent_tag)
 
-    # # Get links the BBC
-    # articles.getArticleLinks(articles.bbc_tag)
-
-    # # Get links the new york times
-    # articles.getArticleLinks(articles.new_york_times_tag)
-
-    # # Get links the Irish times
-    # articles.getArticleLinks(articles.irish_times_tag)
+    # # Get links the Daily Mail
+    # articles.buildArticleLinks(articles.daily_mail_tag)
+    # Get articles for the daily mail
+    articles.buildArticles(articles.daily_mail_tag)
 
 if __name__ == '__main__':
     main()

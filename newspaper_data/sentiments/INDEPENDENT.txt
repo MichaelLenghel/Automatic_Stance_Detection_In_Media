@@ -1,0 +1,8 @@
+Index: 0 Topic: business Sentiment: 0.10294358552213867 Polarity: 0.3676080201251424 Words: [['study', 'business', 'technology', 'system', 'design', 'management', 'social', 'science', 'engineering', 'language']]
+Index: 1 Topic: housing Sentiment: 0.08617268103587322 Polarity: 0.3347704318038562 Words: [['house', 'housing', 'people', 'home', 'property', 'build', 'government', 'cost', 'year', 'social']]
+Index: 2 Topic: online Sentiment: 0.08730350467733809 Polarity: 0.3436547450246817 Words: [['people', 'time', 'make', 'life', 'thing', 'world', 'feel', 'fact', 'happen', 'write']]
+Index: 3 Topic: trump Sentiment: 0.07771792555363104 Polarity: 0.32837945883560044 Words: [['trump', 'campaign', 'election', 'close', 'president', 'political', 'white_house', 'call', 'show']]
+Index: 4 Topic: drugs Sentiment: 0.07163789016761736 Polarity: 0.3225524952953488 Words: [['medicine', 'drug', 'patient', 'doctor', 'health', 'treatment', 'product', 'medical', 'people', 'animal']]
+Index: 5 Topic: brexit Sentiment: 0.07322475972630757 Polarity: 0.33169941623010124 Words: [['deal', 'brexit', 'government', 'leave', 'vote', 'border', 'agreement', 'prime_minister', 'irish']]
+Index: 6 Topic: china Sentiment: 0.0710257636231202 Polarity: 0.3317092610042113 Words: [['trade', 'country', 'market', 'economy', 'economic', 'world', 'global', 'export', 'tariff']]
+Index: 7 Topic: abortion Sentiment: 0.06971803667100579 Polarity: 0.3363988581224817 Words: [['abortion', 'woman', 'law', 'life', 'issue', 'case', 'week', 'legislation', 'pregnancy', 'baby']]

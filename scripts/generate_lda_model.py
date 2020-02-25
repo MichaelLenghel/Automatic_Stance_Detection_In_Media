@@ -164,17 +164,20 @@ def build_mallet_lda_model(articles, word_dict, corpus):
 
     return lda_mallet_model
 
-def clean_data(test_bunch, company_tag):
+def clean_data(test_bunch, company_tag, isSciObj=True):
     ########## ALGO ###################
 
     # Create a list of the articles
-    article_list = list(test_bunch.data)
-
+    if isSciObj == False:
+        article_list = list(test_bunch)
+    else:
+        article_list = list(test_bunch.data)
+    
     # Replace =, cursor and dash, quotes, newlines and emails
-    article_list = [multiple_replacements(article) for article in article_list]
+    article_word_list = [multiple_replacements(article) for article in article_list]
 
     # split each article into words
-    article_word_list = list(split_to_word(article_list))
+    article_word_list = list(split_to_word(article_word_list))
 
     # Print the first article word by word:
     # print(article_word_list[0])
@@ -244,11 +247,8 @@ def create_word_corpus(articles, company_tag):
     for article in articles.data:
         # Extract the parts of the article
         article_parts = article.split('\r\n')
-
         
         topic_name = article_parts[0].strip()
-        # Remove a bracket that caught
-        
 
         try:
             author_name = article_parts[1].strip()[1:]
@@ -297,66 +297,89 @@ def create_word_corpus(articles, company_tag):
     article_date_bigram = ''
     sentence_bigram = ''
 
-
     # Convert bigram_word_corpus to a list:
     for bigram_word in bigram_word_corpus:
-        word1_list = []
-        word2_list = []
-
+        bigram_word_list = []
         topic1_name = topic2_name = author1_name = author2_name = article1_date = article2_date = article1_sentence = article2_sentence = ''
 
         # Get words frm bigram
-        word1, word2 = bigram_word.split('_')
+        print(bigram_word)
 
-        # In future revisions don't include only last bigram in array, take maximum count
-        for word1, word2 in zip(word_corpus[word1],  word_corpus[word2]):
-            
-            # Get word_parts for word1
-            word_parts = word1.split(':::')
-            # Get topic_name from bigram
-            topic1_name = word_parts[0]
-            # Get author_name for bigram
-            author1_name = word_parts[1]
-            # Get article_date for bigram
-            article1_date = word_parts[2]
-            # Get article sentence for bigram
-            article1_sentence = word_parts[3]
-
-            # Grab the parts of the word2
-            word_parts = word2.split(':::')
-            # Get topic_name from bigram
-            topic2_name = word_parts[0]
-            # Get author_name for bigram
-            author2_name = word_parts[1]
-             # Get article_date for bigram
-            article2_date = word_parts[2]
-             # Get article sentence for bigram
-            article2_sentence = word_parts[3]
         
-            # For now have both if and else have same result, but the else will be more
-            # complicated in future revisions, taking account more data
-            if topic1_name == topic2_name:
-                topic_name_bigram = topic1_name
-            else:
-                topic_name_bigram = topic1_name
-            
-            if author1_name == author2_name:
-                author_name_bigram = author1_name
-            else:
-                author_name_bigram = author1_name
+        if bigram_word.count('_') == 1:
+            # Get bigrams
+            word1, word2 = bigram_word.split('_')
+        elif bigram_word.count('_') == 2:
+             # Get trigrams, but only include first and second word for now
+             word1, word2, _ = bigram_word.split('_')
+        elif bigram_word.count('_') == 3:
+            # Get quadrams
+            word1, word2, _, _ = bigram_word.split('_')
+            # Get pentams
+        elif bigram_word.count('_') == 4:
+            word1, word2, _, _, _ = bigram_word.split('_')
+        else:
+            print('Should not reach here!!!')
+            continue
+           
 
-            if article1_date == article2_date:
-                article_date_bigram = article1_date
-            else:
-                article_date_bigram = article1_date
+        # print('word1 = ', word1)
+        # print('word2 = ', word2)
 
-            if article1_sentence == article2_sentence:
-                sentence_bigram = article1_sentence
-            else:
-                sentence_bigram = article1_sentence
+        if word1 in word_corpus.keys():
+            if word2 in  word_corpus.keys():
+                # In future revisions don't include only last bigram in array, take maximum count
+                for word1, word2 in zip(word_corpus[word1],  word_corpus[word2]):
+                    # Get word_parts for word1
+                    word_parts = word1.split(':::')
+                    # Get topic_name from bigram
+                    topic1_name = word_parts[0]
+                    # Get author_name for bigram
+                    author1_name = word_parts[1]
+                    # Get article_date for bigram
+                    article1_date = word_parts[2]
+                    # Get article sentence for bigram
+                    article1_sentence = word_parts[3]
 
-            # Add the bigram
-            word_corpus[bigram_word].append(topic_name_bigram + ':::' + author_name_bigram + ':::' + article_date_bigram + ':::' + sentence_bigram)
+                    # Grab the parts of the word2
+                    word_parts = word2.split(':::')
+                    # Get topic_name from bigram
+                    topic2_name = word_parts[0]
+                    # Get author_name for bigram
+                    author2_name = word_parts[1]
+                    # Get article_date for bigram
+                    article2_date = word_parts[2]
+                    # Get article sentence for bigram
+                    article2_sentence = word_parts[3]
+                
+                    # For now have both if and else have same result, but the else will be more
+                    # complicated in future revisions, taking account more data
+                    if topic1_name == topic2_name:
+                        topic_name_bigram = topic1_name
+                    else:
+                        topic_name_bigram = topic1_name
+                    
+                    if author1_name == author2_name:
+                        author_name_bigram = author1_name
+                    else:
+                        author_name_bigram = author1_name
+
+                    if article1_date == article2_date:
+                        article_date_bigram = article1_date
+                    else:
+                        article_date_bigram = article1_date
+
+                    if article1_sentence == article2_sentence:
+                        sentence_bigram = article1_sentence
+                    else:
+                        sentence_bigram = article1_sentence
+
+                    # Add the bigram
+                    if bigram_word not in bigram_word_list:
+                        bigram_word_list.append(bigram_word)
+                        word_corpus[bigram_word] = []
+                    else:
+                        word_corpus[bigram_word].append(topic_name_bigram + ':::' + author_name_bigram + ':::' + article_date_bigram + ':::' + sentence_bigram)
 
     
     return word_corpus
@@ -398,6 +421,9 @@ def make_bigram_word_corpus(cleaned_data, company_tag):
                     unique_bigram_list.append(word)
                     bigram_word_corpus[word].append('')
     
+    for word in bigram_word_corpus:
+        print(word, end=", ")
+    
     with open(FULL_WORD_CORPUS_PATH, 'wb') as myFile:
         pickle.dump(bigram_word_corpus, myFile) 
 
@@ -419,11 +445,12 @@ def main():
     independent_bunch = gen_bunch(REAL_INDEPENDENT_PATH, company_tags[0])
     print('Finished loading newspaper data...')
 
-    # # Clean newsdata:
-    # independent_data_cleaned = clean_data(independent_bunch, company_tags[0])
-    # print('Finished cleaning data...')
 
-    # # save_newspaper_data for independent
+    # # Clean newsdata:
+    independent_data_cleaned = clean_data(independent_bunch, company_tags[0])
+    print('Finished cleaning data...')
+
+    # save_newspaper_data for independent
     # save_data(independent_data_cleaned, company_tags[0])
     # print('Finished saving cleaned_data...')
 
@@ -431,16 +458,19 @@ def main():
     # Creates a list of all of the bigram words within the corpus and stores it in a fie
     # make_bigram_word_corpus(independent_data_cleaned, company_tags[0])
 
+    # # Create word corpus
+    # word_corpus = create_word_corpus(independent_bunch, company_tags[0])
+
+    # save_word_corpus(word_corpus, company_tags[0])
+
+
+
+
     # # Algo for corpus that points to everythiung
     # # 1. Each word in dict points to a list with every sentence it is in
     # # 2. The list has topicname and date appended to start
     # # 3. Crux is looping through each word and assigning the sentence and all else
     # # 'abortion\r\n{ Lyndsey Telford \r\n
-
-    # Atm need to change to have bigrams in dictionary
-    word_corpus = create_word_corpus(independent_bunch, company_tags[0])
-
-    save_word_corpus(word_corpus, company_tags[0])
 
 
     # # # Create dictionary. This maps id to the word

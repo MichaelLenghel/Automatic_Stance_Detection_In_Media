@@ -4,6 +4,7 @@ import os
 
 def main():
     REAL_INDEPENDENT_PATH = '../corpus/irishArticles/INDEPENDENT'
+    REAL_BBC_PATH = '../corpus/irishArticles/BBC'
     
 
     INDEPENDENT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), REAL_INDEPENDENT_PATH))
