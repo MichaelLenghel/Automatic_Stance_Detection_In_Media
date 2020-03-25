@@ -1,0 +1,14 @@
+1. Download mysql server from: https://dev.mysql.com/downloads/installer/
+2. Start mysql service if not already started
+3. Go to mysql server and start it with the command: "mysql.exe -u $user -p"
+4. CREATE USER 'grafana'@'localhost' IDENTIFIED BY 'password';
+5. CREATE DATABASE topic;
+6. use topic;
+7. GRANT SELECT ON topic.* TO 'grafana'@'localhost';
+8. SOURCE DIR\database\sql_code\sentiments_tables.sql
+9.Download grafana (Default port 3000)
+10. open and add mysql as data source
+11. Explore data and run "SELECT * FROM `topic`.`sentiments`;" with format as set to table to check data is reaching grafana
+12. Run: "SELECT topic AS metric, avg_topic_word_sentiment as value FROM CREATE TABLE `topic`.`sentiments`(
+ORDER BY id"
+

@@ -184,7 +184,7 @@ class WebScrapeArticles:
 
         return article
 
-    def getIndependentArticle(self, url):
+    def getIndependentArticle(self, url, write=True):
         topic = ''
         article = ''
         # Header holds the date of article, url and author
@@ -214,7 +214,9 @@ class WebScrapeArticles:
             # Get the date of the article
             date = soup.find('time',attrs={'class':'time1'})
 
+            
             header = '{ ' + author.text + ' ' + date.text + ' ' + url + ' }' + '\n'
+            
 
             # Get the paragraphs of the article
             div1 = soup.find('div',attrs={'class':'n-body1'})
@@ -223,30 +225,57 @@ class WebScrapeArticles:
                 article += ''.join(para.findAll(text=True)) + ' '
             with self.lock:
                 # Write articles to corpus
-                self.write_to_file(header + article, self.independent_tag, topic)
+                if write:
+                    self.write_to_file(header + article, self.independent_tag, topic)
+                else:
+                    # Do not write as testing
+                    pass
 
         except AttributeError:
             print('Failed to find what we looked for at link, ' + url)
             # When failed to read file, IP blocked,
             # send file to other dir and can read it later
-            self.write_dead_file_to_dir(url, self.independent_tag)
+            if write:
+                self.write_dead_file_to_dir(url, self.independent_tag)
+            else:
+                # Skip as not writing
+                pass
+
             print('Sleeping to stop IP block...')
             time.sleep(20)
         
         except UnicodeEncodeError:
             print('UniCodeEncodeError occured at link' + url)
             
-        return url
+        return article
+    
+    def makeConn(self, url):
+        response = requests.get(url) # , headers=ua)
+        soup = BeautifulSoup(response.text, 'lxml')
+
+        title = soup.find('p',attrs={'div class':'news page-not-found scrollable-content cleared'})
+
+        if title == "":
+            return(soup)
+        else:
+            return("Could not make connection")
+
             
 
-    def getDailyMailArticle(self, urlTopic):
+    def getDailyMailArticle(self, urlTopic, write=True):
         url, topic = urlTopic.split('|')
         article = ''
          # Header holds the date of article, url and author
         header = ''
 
+        # Setup method
+        if not write:
+            self.call_tag = self.daily_mail_tag
+
         try:
+            
             response = requests.get(url) # , headers=ua)
+            
 
             soup = BeautifulSoup(response.text, 'lxml')
 
@@ -255,11 +284,12 @@ class WebScrapeArticles:
 
             # Get the date of the article
             date = soup.find('span',attrs='article-timestamp article-timestamp-published')
-
+            
             header = '{ ' + author.text + ' ' + date.text + ' ' + url + ' }' + '\n'
-
+            
             # Get the paragraphs of the article
             articleDivs = soup.find('div', attrs={'itemprop':'articleBody'})
+            
             paras = articleDivs.findAll('p', attrs={'class':'mol-para-with-font'})
             
             for para in paras:
@@ -269,23 +299,31 @@ class WebScrapeArticles:
                 paras = articleDivs.findAll('p')
                 for para in paras:
                     article += ''.join(para.findAll(text=True)) + ' '
-
+            
             with self.lock:
                 # Write articles to corpus
-                self.write_to_file(header + article, self.daily_mail_tag, topic)
+                if write:
+                    self.write_to_file(header + article, self.daily_mail_tag, topic)
+                else:
+                    # Do not write for tests
+                    pass
 
         except AttributeError:
             print('Failed to find what we looked for at link, ' + url)
             # When failed to read file, IP blocked,
             # send file to other dir and can read it later
-            self.write_dead_file_to_dir(url, self.daily_mail_tag)
+            if write:
+                self.write_dead_file_to_dir(url, self.daily_mail_tag)
+            else:
+                # Do not write for tests
+                pass
             print('Sleeping to stop IP block...')
-            time.sleep(20)
+            # time.sleep(20)
 
         except UnicodeEncodeError:
             print('UniCodeEncodeError occured at link' + url)
 
-        return url
+        return article
 
     def getITArticle(self, utl):
         return ""

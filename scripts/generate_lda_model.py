@@ -242,32 +242,63 @@ def save_data(newspaper_list, company_tag):
 def create_word_corpus(articles, company_tag):
     word_corpus = {}
     unique_words = []
-    print('STARTING TO CREATE WORD CORPUS...')
+    print('STARTING TO CREATE WORD CORPUS for company ' + company_tag + "...")
+
+    # Default of where articles start after headers
+    sentence_start = 4
+
+    if company_tag == "DAILY_MAIL":
+        sentence_start = 2
+    elif company_tag == "INDEPENDENT":
+        sentence_start = 4
+    else:
+        print("Company type used not supported")
+        return
 
     for article in articles.data:
         # Extract the parts of the article
         article_parts = article.split('\r\n')
         
         topic_name = article_parts[0].strip()
+        print(topic_name)
 
-        try:
-            author_name = article_parts[1].strip()[1:]
-        except IndexError:
-            print('Failed to return a author on article ' + article )
+        # DAILY_MAIL articles are formatted differently
+        if company_tag == "DAILY_MAIL":
+            header_line = article_parts[1].strip()[1:]
+            words = header_line.strip().split(" ")
+            try:
+                author_name = ' '.join(words[1:3])
+            except IndexError:
+                print('Failed to return a author on article ' + article )
+            try:
+                # Do regex for date since more consistent
+                article_index = header_line.find('Published:')
+                article_end = header_line.find('https:')
+                article_end -= 3
+                article_date = header_line[article_index:article_end]
+            except IndexError:
+                print('Failed to return a valid date on article ' + article )
+        elif company_tag == "INDEPENDENT":
+            try:
+                author_name = article_parts[1].strip()[1:]
+            except IndexError:
+                print('Failed to return a author on article ' + article )
 
-        try:
-            article_date = article_parts[2].strip()
-        except IndexError:
-            print('Failed to return a valid date on article ' + article )
-        
-
+            try:
+                article_date = article_parts[2].strip()
+            except IndexError:
+                print('Failed to return a valid date on article ' + article )
+        else:
+            print('Company ' + company_tag + " not supported...")
+            return
+    
         # print('Topic name = ' + topic_name)
         # print('Author name = ' + author_name)
         # print('Article date = ' + article_date)
         # print('Link retrieved article from = ' + article_link)
 
         # Loop over every paragraph in the article
-        for part in article_parts[4:]:
+        for part in article_parts[sentence_start:]:
             # Catches the full sentences (used for sentiment analysis)
             sentences = part.split('.')
 
@@ -421,9 +452,6 @@ def make_bigram_word_corpus(cleaned_data, company_tag):
                     unique_bigram_list.append(word)
                     bigram_word_corpus[word].append('')
     
-    for word in bigram_word_corpus:
-        print(word, end=", ")
-    
     with open(FULL_WORD_CORPUS_PATH, 'wb') as myFile:
         pickle.dump(bigram_word_corpus, myFile) 
 
@@ -431,37 +459,40 @@ def make_bigram_word_corpus(cleaned_data, company_tag):
 def main():
     TEST_CORPUS_PATH = '../corpus/20news-bydate-test/'
     REAL_INDEPENDENT_PATH = '../corpus/irishArticles/INDEPENDENT'
-    REAL_BBC_PATH = '../corpus/BBC/INDEPENDENT'
+    REAL_DAILY_MAIL_PATH = '../corpus/irishArticles/DAILY_MAIL'
     # mallet_tag = 'mallet'
     # data_type_tag = 'CleanData'
 
 
-    company_tags = ['INDEPENDENT', 'BBC', 'NEW-YORK-TIMES']
+    company_tags = ['INDEPENDENT', 'DAILY_MAIL', 'NEW-YORK-TIMES']
     test_tag = 'TEST'
 
-    #### INDEPENDENT MODEL BEING BUILT ####
+    company = company_tags[0]
+
+    if company == "DAILY_MAIL":
+        PATH = REAL_DAILY_MAIL_PATH
+    elif company == "INDEPENDENT":
+        PATH = REAL_INDEPENDENT_PATH
 
     # Grab articles from bunch
-    independent_bunch = gen_bunch(REAL_INDEPENDENT_PATH, company_tags[0])
+    data_bunch = gen_bunch(PATH, company)
     print('Finished loading newspaper data...')
 
-
-    # # Clean newsdata:
-    independent_data_cleaned = clean_data(independent_bunch, company_tags[0])
+    # Clean newsdata:
+    cleaned_data = clean_data(data_bunch, company)
     print('Finished cleaning data...')
 
     # save_newspaper_data for independent
-    # save_data(independent_data_cleaned, company_tags[0])
+    # save_data(cleaned_data, company)
     # print('Finished saving cleaned_data...')
 
     # Ran once to cretae bigram list in a file
     # Creates a list of all of the bigram words within the corpus and stores it in a fie
-    # make_bigram_word_corpus(independent_data_cleaned, company_tags[0])
+    make_bigram_word_corpus(cleaned_data, company)
 
     # # Create word corpus
-    # word_corpus = create_word_corpus(independent_bunch, company_tags[0])
-
-    # save_word_corpus(word_corpus, company_tags[0])
+    word_corpus = create_word_corpus(data_bunch, company)
+    save_word_corpus(word_corpus, company)
 
 
 
@@ -473,7 +504,7 @@ def main():
     # # 'abortion\r\n{ Lyndsey Telford \r\n
 
 
-    # # # Create dictionary. This maps id to the word
+    # # Create dictionary. This maps id to the word
     # word_dict = corpora.Dictionary(independent_data_cleaned)
 
     # # # Create corpus. This directly contains ids of the word and the frequency.
@@ -489,6 +520,7 @@ def main():
     #         print(word_dict[word_id], " = ", frequency)
 
     # # Create the lda model. When using the method below ut returns None
+    # This is vanilla lda model and worse than mallets wrapper
     # lda_model = build_lda_model(independent_data_cleaned, word_dict, corpus)
     # print('Finished building lda model...')
 
