@@ -549,9 +549,6 @@ def main(argv):
 
     write_topic_sentiments(topic_sentiments, topic_word_dict, company)
 
-
-
-
     # print_topic_words(lda_mallet_model)
 
     # # Find the dominant topic

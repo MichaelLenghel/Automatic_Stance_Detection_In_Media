@@ -483,8 +483,8 @@ def main():
     print('Finished cleaning data...')
 
     # save_newspaper_data for independent
-    # save_data(cleaned_data, company)
-    # print('Finished saving cleaned_data...')
+    save_data(cleaned_data, company)
+    print('Finished saving cleaned_data...')
 
     # Ran once to cretae bigram list in a file
     # Creates a list of all of the bigram words within the corpus and stores it in a fie
@@ -505,11 +505,11 @@ def main():
 
 
     # # Create dictionary. This maps id to the word
-    # word_dict = corpora.Dictionary(independent_data_cleaned)
+    word_dict = corpora.Dictionary(independent_data_cleaned)
 
     # # # Create corpus. This directly contains ids of the word and the frequency.
-    # corpus = [word_dict.doc2bow(data) for data in independent_data_cleaned]
-    # print('Finished creating corpus...')
+    corpus = [word_dict.doc2bow(data) for data in independent_data_cleaned]
+    print('Finished creating corpus...')
 
     # Will map word id to word frequency
     # print(corpus[:1])

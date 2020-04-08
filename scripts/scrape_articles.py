@@ -495,14 +495,14 @@ def main():
     articles = WebScrapeArticles()
 
     # Get links the independent
-    # articles.buildArticleLinks(articles.independent_tag)
+    articles.buildArticleLinks(articles.independent_tag)
     # Get articles for the independent
-    # articles.buildArticles(articles.independent_tag)
+    articles.buildArticles(articles.independent_tag)
 
     # # Get links the Daily Mail
     # articles.buildArticleLinks(articles.daily_mail_tag)
     # Get articles for the daily mail
-    articles.buildArticles(articles.daily_mail_tag)
+    # articles.buildArticles(articles.daily_mail_tag)
 
 if __name__ == '__main__':
     main()
