@@ -6,7 +6,7 @@ Setup Instructions (Fuctionality - Scraping aritcles, creating and running model
 5. Run generate_lda_model.py to create the associated word corpus (used for opinion mining tchniques) and lda topic corpus
 6. Run visualise_lda.py to generate stance score. Can uncomment code responsible for calculating stance scores or build more visualisations if want more informaiton.
 
-(Setup Instructions (Visualisations - Creating graphs with data)
+(Setup Instructions (Visualisations - Creating visualisations)
 1. Download mysql server from: https://dev.mysql.com/downloads/installer/
 2. Start mysql service if not already started
 3. Go to mysql server and start it with the command: "mysql.exe -u $user -p"
